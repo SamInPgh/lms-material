@@ -298,10 +298,11 @@ Vue.component('lms-npshare-dialog', {
                     title:trackTitle(playerStatus.current),
                     artist:playerStatus.current.artist,
                     trackartist:playerStatus.current.trackartist,
-                    album:playerStatus.current.album+
-                        (playerStatus.current.year && playerStatus.current.year>0
-                          ? " ("+ playerStatus.current.year+")"
-                          : ""),
+                    album:undefined==playerStatus.current.album
+                            ? undefined 
+                            : (playerStatus.current.year && playerStatus.current.year>0
+                                ? " ("+ playerStatus.current.year+")"
+                                : ""),
                     extid: playerStatus.current.extid
                 }
                 if (track.title!=this.track.title ||
