@@ -294,9 +294,9 @@ Vue.component('lms-npshare-dialog', {
                     artist:playerStatus.current.artist,
                     trackartist:playerStatus.current.trackartist,
                     album:playerStatus.current.album+
-                        playerStatus.current.year && playerStatus.current.year>0
+                        (playerStatus.current.year && playerStatus.current.year>0
                           ? " ("+ playerStatus.current.year+")"
-                          : "",
+                          : ""),
                     extid: playerStatus.current.extid
                 }
                 if (track.title!=this.track.title ||
