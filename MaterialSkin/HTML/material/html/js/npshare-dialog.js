@@ -69,7 +69,18 @@ function formatLines(ctx, text, maxTextWidth, fontSize, minFontSize, weight, fon
     return {lines:lines, fontSize:fontSize};
 }
 
-function nowPlayingRenderToCanvas(track, artImg, isDark) {
+function waitForLoad(element) {
+    return new Promise((resolve, reject) => {
+        if (element.complete && element.naturalHeight !== 0) {
+            resolve(element);
+            return;
+        }
+        element.onload = () => resolve(element);
+        element.onerror = (err) => reject(err);
+    });
+}
+
+async function nowPlayingRenderToCanvas(track, artImg, isDark) {
     const H                = 180;
     const W                = H * 3;
     const ART_MARGIN       = 10;
@@ -193,6 +204,23 @@ function nowPlayingRenderToCanvas(track, artImg, isDark) {
         }
         ty += (0==e ? 12 : 4);
     }
+
+    let svg = new Image();
+    svg.src = "/material/svg/lyrion-logo?c=" + (isDark ? LMS_DARK_SVG : LMS_LIGHT_SVG);
+    try {
+        await waitForLoad(svg);
+        let h = 16;
+        let w = h * (svg.width/svg.height)
+        ctx.globalAlpha = 0.75;
+        ctx.drawImage(svg, canvas.width-(w+14), 9, w, h);
+        ctx.beginPath();
+        ctx.roundRect(canvas.width-(w+22), 5, w+18, h+8, (h+8)/2);
+        ctx.strokeStyle = TEXT_COLOR;
+        ctx.stroke();
+    } catch (error) {
+        console.error('Failed to load image', error);
+    }
+
     ctx.restore();
     return canvas;
 }
@@ -273,8 +301,8 @@ Vue.component('lms-npshare-dialog', {
     methods: {
         createImage(c) {
             let view = this;
-            loadImage(view.coverUrl).then(function(artImg) {
-                let canvas = nowPlayingRenderToCanvas(view.track, artImg, view.$store.state.darkUi);
+            loadImage(view.coverUrl).then(async function(artImg) {
+                let canvas = await nowPlayingRenderToCanvas(view.track, artImg, view.$store.state.darkUi);
                 view.cw = canvas.width;
                 view.ch = canvas.height;
                 view.src = canvas.toDataURL('image/png');
