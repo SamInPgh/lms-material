@@ -337,7 +337,7 @@ Vue.component('lms-npshare-dialog', {
         download() {
             let a = document.createElement('a');
             let ts = new Date().toISOString().slice(0, 19).replace(/[T:]/g,'-');
-            a.download = 'now-playing-' + ts + '.png';
+            a.download = 'lyrion-' + ts + '.png';
             a.href = this.src;
             a.click();
         },
