@@ -78,7 +78,7 @@ var app = new Vue({
                             manage: false, rndmix: false, favorite: false, rating: false, sleep: false,
                             iteminfo: false, iframe: false, dstm: false, savequeue: false, icon: false, prompt:false,
                             addtoplaylist: false, file: false, groupvolume: false, advancedsearch: false, downloadstatus:false,
-                            gallery: false, choice: false, playersettingsplugin: false, playerlist: false
+                            gallery: false, choice: false, playersettingsplugin: false, playerlist: false, npshare: false
                           },
                  loaded: false,
                  snackbar:{ show: false, msg: undefined},

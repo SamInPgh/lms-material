@@ -422,7 +422,7 @@ function nowplayingShowMenu(view, event) {
         }
         if (undefined!=view.playerStatus.current.title) {
             if (undefined!=view.coverUrl && navigator.clipboard && window.isSecureContext && typeof ClipboardItem !== 'undefined') {
-                view.menu.items.push({title:ACTIONS[COPY_ACTION].title, act:NP_COPY_CMD, icon:"music_video"});
+                view.menu.items.push({title:i18n('Share'), act:NP_SHARE_CMD, icon:"share"});
             }
             view.menu.items.push({title:ACTIONS[COPY_DETAILS_ACTION].title, act:NP_COPY_DETAILS_CMD, icon:ACTIONS[COPY_DETAILS_ACTION].icon});
         }
@@ -467,14 +467,17 @@ function nowplayingMenuAction(view, item) {
         }
         bus.$emit("browse", item.cmd.command, item.cmd.params, item.cmd.title, 'now-playing', undefined, item.cmd.subtitle);
         view.close();
-    } else if (NP_COPY_CMD==item.act) {
+    } else if (NP_SHARE_CMD==item.act) {
         loadImage(view.coverUrl).then(function(artImg) {
             let canvas = nowPlayingRenderToCanvas(view.playerStatus.current, artImg, view.darkUi);
+            bus.$emit("dlg.open", "npshare", canvas);
+            /*
             canvas.toBlob(function(blob) {
                 const item = new ClipboardItem({ "image/png": blob });
                 navigator.clipboard.write([item]);
             });
             canvas.remove();
+            */
         });
     } else if (NP_COPY_DETAILS_CMD==item.act) {
         let text = undefined;
@@ -1324,11 +1327,11 @@ function formatLines(ctx, text, maxTextWidth, fontSize, minFontSize, weight, fon
 }
 
 function nowPlayingRenderToCanvas(track, artImg, isDark) {
-    const W                = 750;
-    const H                = 250;
-    const ART_MARGIN       = 15;
+    const H                = 180;
+    const W                = H * 3;
+    const ART_MARGIN       = 10;
     const ART_MAX_SIZE     = H - (2 * ART_MARGIN);
-    const R                = 16;
+    const R                = 14;
     const OVERLAY_ALPHA    = 0.45;
     const FONT_SUFFIX      = 'px Roboto, sans-serif';
     const TEXT_COLOR       = "#" + (isDark ? LMS_DARK_SVG : LMS_LIGHT_SVG); // # fff
@@ -1412,19 +1415,19 @@ function nowPlayingRenderToCanvas(track, artImg, isDark) {
     let entries = [];
 
     // Auto-scale title — start smaller, max 2 lines, scale down to fit
-    let formatted = formatLines(ctx, track.title, textW, 30, 24, EXTR_BOLD_WEIGHT, FONT_SUFFIX);
+    let formatted = formatLines(ctx, track.title, textW, 24, 18, EXTR_BOLD_WEIGHT, FONT_SUFFIX);
     entries.push({lines:formatted.lines, fontSize:formatted.fontSize, weight:EXTR_BOLD_WEIGHT, color:TEXT_COLOR});
 
-    formatted = formatLines(ctx, stripTags(track.artist ? track.artist : track.trackartist), textW, 20, 14, STD_WEIGHT, FONT_SUFFIX);
+    formatted = formatLines(ctx, stripTags(track.artist ? track.artist : track.trackartist), textW, 16, 12, STD_WEIGHT, FONT_SUFFIX);
     entries.push({lines:formatted.lines, fontSize:formatted.fontSize, weight:STD_WEIGHT, color:TEXT_COLOR});
 
-    formatted = formatLines(ctx, stripTags(track.album), textW, 18, 12, STD_WEIGHT, FONT_SUFFIX);
+    formatted = formatLines(ctx, stripTags(track.album), textW, 14, 10, STD_WEIGHT, FONT_SUFFIX);
     entries.push({lines:formatted.lines, fontSize:formatted.fontSize, weight:STD_WEIGHT, color:CTX_TEXT_COLOR});
 
     // Calculate total block height for vertical centring
     let totalTextH = 44
-                     + (Math.min(entries[0].lines.length, 2) * entries[0].fontSize * 1.15) + 16
-                     + (Math.min(entries[1].lines.length, 2) * entries[1].fontSize * 1.15) + 8
+                     + (Math.min(entries[0].lines.length, 2) * entries[0].fontSize * 1.15) + 12
+                     + (Math.min(entries[1].lines.length, 2) * entries[1].fontSize * 1.15) + 4
                      + (Math.min(entries[2].lines.length, 2) * entries[2].fontSize * 1.15);
     let ty = (H - totalTextH) / 2;
 
@@ -1445,7 +1448,7 @@ function nowPlayingRenderToCanvas(track, artImg, isDark) {
             ctx.fillText(entries[e].lines[1]+(entries[e].lines.length>2 ? "..." : ""), tx, ty + lineH);
             ty += lineH;
         }
-        ty += (0==e ? 16 : 8);
+        ty += (0==e ? 12 : 4);
     }
     ctx.restore();
     return canvas;
