@@ -217,8 +217,27 @@ async function nowPlayingRenderToCanvas(track, artImg, isDark) {
         ctx.roundRect(canvas.width-(w+22), 5, w+18, h+8, (h+8)/2);
         ctx.strokeStyle = TEXT_COLOR;
         ctx.stroke();
-    } catch (error) {
-        console.error('Failed to load image', error);
+    } catch (e) {
+    }
+
+    if (undefined!=track.extid) {
+        let emblem = getEmblem(track.extid);
+        if (undefined!=emblem) {
+            svg = new Image();
+            svg.src = "/material/svg/"+emblem.name+"?c="+emblem.color.substr(1);
+            try {
+                await waitForLoad(svg);
+                let size = 22;
+                let x = usedArtW + ART_MARGIN;
+                ctx.globalAlpha = 0.5;
+                ctx.fillStyle = emblem.bgnd;
+                ctx.beginPath();
+                ctx.arc(x-18, 18, (size+4)/2, 0, 2*Math.PI);
+                ctx.fill();
+                ctx.drawImage(svg, x-(size+7), 7, size, size);
+            } catch (e) {
+            }
+        }
     }
 
     ctx.restore();
@@ -277,12 +296,14 @@ Vue.component('lms-npshare-dialog', {
                     album:playerStatus.current.album+
                         playerStatus.current.year && playerStatus.current.year>0
                           ? " ("+ playerStatus.current.year+")"
-                          : ""
+                          : "",
+                    extid: playerStatus.current.extid
                 }
                 if (track.title!=this.track.title ||
                     track.artist!=this.track.artist ||
                     track.trackartist!=this.track.trackartist ||
-                    track.album!=this.track.album) {
+                    track.album!=this.track.album ||
+                    track.extid!=this.track.extid) {
                     this.track = track;
                     this.createImage();
                 }
