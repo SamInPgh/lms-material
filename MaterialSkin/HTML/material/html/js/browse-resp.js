@@ -344,14 +344,16 @@ function parseBrowseResp(data, parent, options, cacheKey) {
                         i.isFavFolder = true;
                         resp.allowHoverBtns = true;
                     }
-                    if (i.isFavFolder) {
-                        i.menu.push(RENAME_ACTION);
-                    } else if (i.presetParams) {
-                        i.menu.push(EDIT_ACTION);
-                    }
-                    i.menu.push(i.isFavFolder ? DELETE_FAV_FOLDER_ACTION : REMOVE_FROM_FAV_ACTION);
-                    if (undefined!=parent && parent.id!=TOP_FAVORITES_ID) {
-                        i.menu.push(MOVE_FAV_TO_PARENT_ACTION);
+                    if (!parent || !parent.isHomeExtra) {
+                        if (i.isFavFolder) {
+                            i.menu.push(RENAME_ACTION);
+                        } else if (i.presetParams) {
+                            i.menu.push(EDIT_ACTION);
+                        }
+                        i.menu.push(i.isFavFolder ? DELETE_FAV_FOLDER_ACTION : REMOVE_FROM_FAV_ACTION);
+                        if (undefined!=parent && parent.id!=TOP_FAVORITES_ID) {
+                            i.menu.push(MOVE_FAV_TO_PARENT_ACTION);
+                        }
                     }
                     if (i.isFavFolder && (!i.image || i.image.startsWith("/html/images/favorites"+LMS_LIST_IMAGE_SIZE))) {
                         i.svg="folder-favorite";
@@ -2474,7 +2476,7 @@ function parseBrowseResp(data, parent, options, cacheKey) {
                 }
                 if (loop!=undefined) {
                     let isFav = lists[s].section==SECTION_FAVORITES;
-                    let parent = isFav ? {section:SECTION_FAVORITES, isFavFolder:true} : undefined;
+                    let parent = isFav ? {section:SECTION_FAVORITES, isFavFolder:true, isHomeExtra:true} : undefined;
                     let new_data = {
                         id:2,
                         method: data.method,
