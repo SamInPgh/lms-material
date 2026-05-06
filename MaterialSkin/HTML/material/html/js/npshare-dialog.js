@@ -52,6 +52,9 @@ function wrapText(ctx, text, maxW) {
 }
 
 function formatLines(ctx, text, maxTextWidth, fontSize, minFontSize, weight, fontSuffix) {
+    if (undefined==text) {
+        return {lines:[], fontSize:fontSize}
+    }
     ctx.font = weight + fontSize + fontSuffix;
     let lines = wrapText(ctx, text, maxTextWidth);
 
@@ -193,16 +196,18 @@ async function nowPlayingRenderToCanvas(track, artImg, isDark) {
 
     ctx.letterSpacing = '0.0em';
     for (let e=0; e<3; ++e) {
-        let lineH = entries[e].fontSize * 1.15;
-        ctx.font = entries[e].weight + entries[e].fontSize + FONT_SUFFIX;
-        ctx.fillStyle = entries[e].color;
-        ctx.fillText(entries[e].lines[0], tx, ty + lineH);
-        ty += lineH;
-        if (entries[e].lines.length>1) {
-            ctx.fillText(entries[e].lines[1]+(entries[e].lines.length>2 ? "..." : ""), tx, ty + lineH);
+        if (entries[e].lines.length>0) {
+            let lineH = entries[e].fontSize * 1.15;
+            ctx.font = entries[e].weight + entries[e].fontSize + FONT_SUFFIX;
+            ctx.fillStyle = entries[e].color;
+            ctx.fillText(entries[e].lines[0], tx, ty + lineH);
             ty += lineH;
+            if (entries[e].lines.length>1) {
+                ctx.fillText(entries[e].lines[1]+(entries[e].lines.length>2 ? "..." : ""), tx, ty + lineH);
+                ty += lineH;
+            }
+            ty += (0==e ? 12 : 4);
         }
-        ty += (0==e ? 12 : 4);
     }
 
     let svg = new Image();
