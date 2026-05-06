@@ -420,7 +420,7 @@ function browseHandleListResponse(view, item, command, resp, prevPage, appendIte
         view.current = item;
         view.currentLibId = command.libraryId;
         view.pinnedItemLibName = item.libname ? item.libname : view.pinnedItemLibName;
-        view.listSize=resp.listSize;
+        view.listSize=resp.listSize ? resp.listSize : 0;
         view.allTracksItem=resp.allTracksItem;
         view.jumplist=resp.jumplist;
         view.filteredJumplist = [];
