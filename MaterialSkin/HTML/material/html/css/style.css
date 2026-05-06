@@ -3766,6 +3766,7 @@ div.v-subheader {
 .check-btn {
  color:white;
  background-color:var(--primary-color)!important;
+ z-index:1; /* so that check is above work covers */
 }
 
 .check-btn:after {
