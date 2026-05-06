@@ -915,6 +915,7 @@ function parseBrowseResp(data, parent, options, cacheKey) {
                 if (resp.isMusicMix) {
                     resp.items.shift();
                     resp.subtitle=0==resp.items.length ? i18n("Empty") : i18np("1 Track", "%1 Tracks", resp.items.length-numHeaders);
+                    resp.listSize=resp.items.length;
                 } else {
                     if (resp.items.length>0 &&
                         ( ("spotty"==command) || ("trackinfo"==command && getIndex(data.params[1], "url:spotify://track:")>0))) {

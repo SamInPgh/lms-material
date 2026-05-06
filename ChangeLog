@@ -6,6 +6,7 @@
    mspertus.
 4. Add 'Share' to now-playing context menu, creates an image of current track
    for sharing. Thanks to crystalgipsy for the original implementation.
+5. Don't ask for more when scroll music mixes.
 
 6.3.2
 -----
